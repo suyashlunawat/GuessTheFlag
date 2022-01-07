@@ -20,8 +20,8 @@ var body: some View {
 
 
 struct SwiftUIView: View {
-    
-    @State private var flagTapTracker = 4
+    @State private var scaleTracker = 1.0
+    @State private var flagTapTracker = 0
     @State private var animationAmount = 0.0
     @State private var opacityTracker = 1.0
     @State private var showingScore = false
@@ -61,13 +61,13 @@ struct SwiftUIView: View {
                                                 ForEach(0..<3){ number in
                                                 Button {
                                                 flagTapped(number)
-                                                flagTapTracker = number
-                                                    withAnimation(.easeIn(duration: 1)) {
+                                                
+                                                    withAnimation {
                                                 animationAmount += 360
+                                                opacityTracker -= 0.75
+                                                scaleTracker -= 0.50
                                                     }
-                                                    withAnimation(.easeIn(duration: 1)) {
-                                                        opacityTracker -= 0.75
-                                                    }
+
                                                    
                                                     
 // flag was tapped
@@ -76,7 +76,8 @@ struct SwiftUIView: View {
                                                     FlagImage(image: countries[number])
                                                         .rotation3DEffect(.degrees(number == flagTapTracker ? animationAmount : 0), axis: (x: 0, y: 1, z: 0))
                                                         .opacity(number != flagTapTracker ? opacityTracker : 1)
-                                                        .scaleEffect(number != flagTapTracker ? opacityTracker : 1)
+                                                        .scaleEffect(number != flagTapTracker ? scaleTracker : 1)
+                                                        
 
                                                 }
 
@@ -112,8 +113,8 @@ struct SwiftUIView: View {
             Text ("Your got \(score) correct out of 8")
         }
        
-    }
-    func flagTapped(_ number : Int) {
+}
+func flagTapped(_ number : Int) {
         if number == correctAnswer {
             scoreTitle = "Correct"
             score += 1
@@ -130,7 +131,7 @@ struct SwiftUIView: View {
         flagTapTracker = number
 }
     
-    func askQuestion() {
+func askQuestion() {
         alertTriggered += 1
         if alertTriggered == 8 {
             alertChecker = true
@@ -138,17 +139,17 @@ struct SwiftUIView: View {
         countries.shuffle()
         flagTapTracker = 4
         opacityTracker = 1
+        scaleTracker = 1
         correctAnswer = Int.random(in: 0...2)
     }
-    func addQuestion() {
+    
+func addQuestion() {
         nthQuestion += 1
        if nthQuestion == 9 {
             nthQuestion = 8
              }
-        
-        
     }
-    func reset() {
+func reset() {
     score = 0
     nthQuestion = 1
     alertTriggered = 0
